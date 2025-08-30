@@ -1,0 +1,46 @@
+version: "3"
+
+tasks:
+  deps:
+    desc: "Download and install all dependencies"
+    cmds:
+      - go mod tidy
+      - go mod download
+
+  test:
+    desc: "Run all tests"
+    cmds:
+      - task: test-unit
+      - task: test-integration
+
+  test-unit:
+    desc: "Run unit tests"
+    cmds:
+      - echo "Running unit tests..."
+      - go test -v ./internal/tests/unit/...
+
+  test-integration:
+    desc: "Run integration tests (requires CGO for SQLite)"
+    cmds:
+      - echo "Running integration tests..."
+      - CGO_ENABLED=1 go test -v ./internal/tests/integration/...
+
+  test-integration-nocgo:
+    desc: "Run integration tests without CGO (if you want to skip SQLite tests)"
+    cmds:
+      - echo "Running integration tests (without CGO)..."
+      - go test -v ./internal/tests/integration/... -tags=nocgo
+
+  test-coverage:
+    desc: "Run tests with coverage and generate HTML report"
+    cmds:
+      - echo "Running tests with coverage..."
+      - CGO_ENABLED=1 go test -coverprofile=coverage.out ./...
+      - go tool cover -html=coverage.out
+
+  test-unit-coverage:
+    desc: "Run unit tests with coverage"
+    cmds:
+      - echo "Running unit tests with coverage..."
+      - go test -coverprofile=unit-coverage.out ./internal/tests/unit/...
+      - go tool cover -html=unit-coverage.out
