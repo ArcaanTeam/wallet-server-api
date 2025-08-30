@@ -1,12 +1,12 @@
 package constants
 
-const (
-	ErrIDParamNotProvided = "id not provided"
-	ErrInvalidIDParam     = "invalid id"
-)
+type ErrorType uint
 
 const (
-	ErrAuthUserNotFound        = "user not found"
-	ErrAuthUnauthorized        = "unauthorized"
-	ErrAuthGenerateTokenFailed = "failed to generate token"
+	ErrIDParamNotProvided ErrorType = iota
+	ErrInvalidIDParam
+
+	ErrAuthUserNotFound
+	ErrAuthUnauthorized
+	ErrAuthGenerateTokenFailed
 )
