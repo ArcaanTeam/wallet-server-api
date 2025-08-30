@@ -26,24 +26,9 @@ func (c *authController) Login(ctx *gin.Context) {
 
 	token, user, err := c.s.Login(input)
 	// FIXME: move error handling to error middleware
-	if err != nil {
-		var statusCode int
-		errorString := err.Error()
-
-		switch errorString {
-		case constants.ErrAuthUserNotFound:
-			statusCode = http.StatusNotFound
-		case constants.ErrAuthUnauthorized:
-			statusCode = http.StatusUnauthorized
-		case constants.ErrAuthGenerateTokenFailed:
-			statusCode = http.StatusInternalServerError
-		}
-		ctx.JSON(
-			statusCode,
-			gin.H{
-				"error": errorString,
-			},
-		)
+	if err != constants.ErrNone {
+		ctx.Error(err)
+		ctx.Next()
 		return
 	}
 

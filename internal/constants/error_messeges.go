@@ -1,12 +1,18 @@
 package constants
 
-type ErrorType uint
+type ErrorType string
 
 const (
-	ErrIDParamNotProvided ErrorType = iota
-	ErrInvalidIDParam
+	ErrNone = "no error"
 
-	ErrAuthUserNotFound
-	ErrAuthUnauthorized
-	ErrAuthGenerateTokenFailed
+	ErrIDParamNotProvided = "id param not provided"
+	ErrInvalidIDParam     = "invalid id param"
+
+	ErrAuthUserNotFound        = "user not found"
+	ErrAuthUnauthorized        = "unauthorized"
+	ErrAuthGenerateTokenFailed = "failed to generate token"
 )
+
+func (e ErrorType) Error() string {
+	return string(e)
+}
