@@ -1,0 +1,31 @@
+swagger: "2.0"
+info:
+  title: "Modern Gin API"
+  description: "Modern Gin application with 3-layer architecture and API versioning"
+  version: "1.0.0"
+  contact:
+    name: "API Support"
+    email: "support@example.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "localhost:8080"
+basePath: "/api"
+schemes:
+  - "http"
+  - "https"
+consumes:
+  - "application/json"
+produces:
+  - "application/json"
+securityDefinitions:
+  BearerAuth:
+    type: "apiKey"
+    name: "Authorization"
+    in: "header"
+    description: "JWT Bearer token. Example: 'Bearer {token}'"
+tags:
+  - name: "users-v1"
+    description: "User management operations (v1)"
+  - name: "products-v1"
+    description: "Product management operations (v1)"

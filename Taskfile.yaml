@@ -1,0 +1,29 @@
+version: "3"
+
+tasks:
+  run:
+    desc: Run the application
+    cmds:
+      - task: swagger
+      - go run cmd/server/main.go
+
+  build:
+    desc: Build binary
+    cmds:
+      - go build -o bin/server cmd/server/main.go
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./... -v
+
+  swagger:
+    desc: Generate Swagger docs
+    cmds:
+      - swag init -g cmd/server/main.go --output docs --parseDependency --parseInternal
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf bin/
+      - rm -f docs/docs.go docs/swagger.json

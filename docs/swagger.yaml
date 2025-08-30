@@ -1,0 +1,256 @@
+definitions:
+  wallet-server-api_internal_domain_models.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        example: Operation failed
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  wallet-server-api_internal_domain_models.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        example: Operation successful
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  wallet-server-api_internal_domain_models.User:
+    description: User entity with personal information
+    properties:
+      age:
+        example: 30
+        type: integer
+      created_at:
+        example: "2025-01-01T00:00:00Z"
+        type: string
+      email:
+        example: john.doe@example.com
+        type: string
+      first_name:
+        example: John
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      last_name:
+        example: Doe
+        type: string
+      updated_at:
+        example: "2025-01-01T00:00:00Z"
+        type: string
+    type: object
+  wallet-server-api_internal_domain_models.UserCreateRequest:
+    description: User creation request data
+    properties:
+      age:
+        example: 30
+        maximum: 120
+        minimum: 18
+        type: integer
+      email:
+        example: john.doe@example.com
+        type: string
+      first_name:
+        example: John
+        maxLength: 50
+        minLength: 1
+        type: string
+      last_name:
+        example: Doe
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - age
+    - email
+    - first_name
+    - last_name
+    type: object
+  wallet-server-api_internal_domain_models.UserUpdateRequest:
+    description: user update request data
+    properties:
+      age:
+        example: 31
+        type: integer
+      first_name:
+        example: john
+        type: string
+      last_name:
+        example: john
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/users:
+    get:
+      description: Get a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wallet-server-api_internal_domain_models.SuccessResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/wallet-server-api_internal_domain_models.User'
+                  type: array
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+      summary: Get all users
+      tags:
+      - users-v1
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided data
+      parameters:
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/wallet-server-api_internal_domain_models.UserCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/wallet-server-api_internal_domain_models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/wallet-server-api_internal_domain_models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+      summary: Create a new user
+      tags:
+      - users-v1
+  /api/v1/users/{id}:
+    delete:
+      description: Delete a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+      summary: Delete user
+      tags:
+      - users-v1
+    get:
+      description: Get user details by user ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wallet-server-api_internal_domain_models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/wallet-server-api_internal_domain_models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - users-v1
+    put:
+      consumes:
+      - application/json
+      description: Update an existing user with the provided data
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/wallet-server-api_internal_domain_models.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/wallet-server-api_internal_domain_models.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/wallet-server-api_internal_domain_models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/wallet-server-api_internal_domain_models.ErrorResponse'
+      summary: Update user
+      tags:
+      - users-v1
+swagger: "2.0"
