@@ -7,6 +7,17 @@ tasks:
       - go mod tidy
       - go mod download
 
+  run:
+    desc: Run the application
+    cmds:
+      - task: swagger
+      - go run cmd/server/main.go
+
+  build:
+    desc: Build binary
+    cmds:
+      - go build -o bin/server cmd/server/main.go
+
   test:
     desc: "Run all tests"
     cmds:
@@ -44,3 +55,9 @@ tasks:
       - echo "Running unit tests with coverage..."
       - go test -coverprofile=unit-coverage.out ./internal/tests/unit/...
       - go tool cover -html=unit-coverage.out
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf bin/
+      - rm -f docs/docs.go docs/swagger.json
