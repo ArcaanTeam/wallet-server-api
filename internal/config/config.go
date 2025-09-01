@@ -17,41 +17,41 @@ type FlagsConfig struct {
 	Migrate bool
 }
 
-type Configs struct {
+type Config struct {
 	DBConfig DBConfig
 	Flags    FlagsConfig
 }
 
 // Singleton essentials
 var (
-	instance *Configs
+	instance *Config
 	once     sync.Once
 )
 
-func GetConfig() *Configs {
+func GetConfig() *Config {
 	once.Do(func() {
-		instance = &Configs{
+		instance = &Config{
 			DBConfig: NewDBConfig(),
 		}
 	})
 	return instance
 }
 
-func (c *Configs) Load() {
+func (c *Config) Load() {
 	godotenv.Load()
 
 	c.ParseFlags()
 	c.LoadDBConfig()
 }
 
-func (c *Configs) ParseFlags() {
+func (c *Config) ParseFlags() {
 	flag.IntVar(&c.Flags.Port, "port", 8080, "Port to run the server on")
 	flag.BoolVar(&c.Flags.Migrate, "migrate", false, "Run with migration")
 
 	flag.Parse()
 }
 
-func (c *Configs) LoadDBConfig() {
+func (c *Config) LoadDBConfig() {
 	cfg := &c.DBConfig
 
 	// Add new db envs here
@@ -78,6 +78,6 @@ func (c *Configs) LoadDBConfig() {
 	}
 }
 
-func (c *Configs) GetPortString() string {
+func (c *Config) GetPortString() string {
 	return fmt.Sprintf(":%s", strconv.Itoa(c.Flags.Port))
 }
