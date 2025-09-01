@@ -1,21 +1,27 @@
 package main
 
 import (
-	"wallet-api/internal/controllers/routes"
-	"wallet-api/internal/providers"
+	"wallet-api/internal/config"
+	"wallet-api/internal/container"
+	"wallet-api/internal/controller/routes"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	providers.LoadConfig()
-	providers.InitDB()
-	providers.Migrate()
+	cfg := config.GetConfig()
+	cfg.Load()
 
+	// TODO: move migration to each model
+	// config.DBConfig.InitDB
+
+	container := container.NewContainer(cfg.DBConfig.DB)
 	engine := gin.Default()
+	router := engine.Group("/api")
 
-	routes.NewUserRoutes(providers.DB, engine).Setup()
-	routes.NewAuthRoutes(providers.DB, engine).Setup()
+	routes.NewUserRoutes(container).Setup(router.Group("/users"))
+	routes.NewAuthRoutes(container).Setup(router.Group("/auth"))
+	routes.NewTestRoutes(container).Setup(router.Group("/test"))
 
-	engine.Run(":8080")
+	engine.Run(cfg.GetPortString())
 }

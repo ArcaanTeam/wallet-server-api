@@ -5,6 +5,8 @@ type ErrorType string
 const (
 	ErrNone = "no error"
 
+	ErrInternal = "internal server error"
+
 	ErrIDParamNotProvided = "id param not provided"
 	ErrInvalidIDParam     = "invalid id param"
 

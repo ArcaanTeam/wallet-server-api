@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"wallet-api/internal/controllers/middlewares"
+	"wallet-api/internal/controller/middlewares"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"

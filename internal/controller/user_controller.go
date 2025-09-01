@@ -1,24 +1,37 @@
-package controllers
+package controller
 
 import (
 	"net/http"
 	"wallet-api/internal/dto"
-	"wallet-api/internal/services"
+	"wallet-api/internal/service"
 	"wallet-api/internal/utils"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-type userController struct {
-	s services.IUserService
+type UserController struct {
+	s service.UserService
 }
 
-func NewUserController(service services.IUserService) *userController {
-	return &userController{s: service}
+type GinHandler struct {
+	//TODO use type
+	Method  string
+	Handler gin.HandlerFunc
+	Path    string
 }
 
-func (c *userController) CreateUser(ctx *gin.Context) {
+type IGinControllerGroup interface {
+	GetPrefix() string
+	GetRouteHandlers() []GinHandler
+	GetMiddlewares() []gin.HandlerFunc
+}
+
+func NewUserController(service service.UserService) *UserController {
+	return &UserController{s: service}
+}
+
+func (c *UserController) CreateUser(ctx *gin.Context) {
 	var input dto.CreateUserInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -38,7 +51,7 @@ func (c *userController) CreateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, createdUser)
 }
 
-func (c *userController) UpdateUser(ctx *gin.Context) {
+func (c *UserController) UpdateUser(ctx *gin.Context) {
 	userIdString, _, err := utils.GetIdParam(ctx)
 	if err != nil {
 		return
@@ -61,7 +74,7 @@ func (c *userController) UpdateUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, updatedUser)
 }
 
-func (c *userController) GetUserByID(ctx *gin.Context) {
+func (c *UserController) GetUserByID(ctx *gin.Context) {
 	idString, _, err := utils.GetIdParam(ctx)
 	if err != nil {
 		return
@@ -85,7 +98,7 @@ func (c *userController) GetUserByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
-func (c *userController) GetProfile(ctx *gin.Context) {
+func (c *UserController) GetProfile(ctx *gin.Context) {
 	userID, exists := ctx.Get("userID")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authorized"})
@@ -122,7 +135,7 @@ func (c *userController) GetProfile(ctx *gin.Context) {
 	})
 }
 
-func (c *userController) GetUsers(ctx *gin.Context) {
+func (c *UserController) GetUsers(ctx *gin.Context) {
 	users, err := c.s.GetUsers()
 	if err != nil {
 		// TODO: handle not-found branch separately

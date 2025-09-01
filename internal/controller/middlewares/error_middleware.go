@@ -3,7 +3,7 @@ package middlewares
 import (
 	"net/http"
 	"wallet-api/internal/constants"
-	"wallet-api/internal/controllers"
+	"wallet-api/internal/dto"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func ErrorHandler() gin.HandlerFunc {
 			} else {
 				statusCode = http.StatusInternalServerError
 			}
-			ctx.JSON(statusCode, controllers.NewErrorResponse(err))
+			ctx.JSON(statusCode, dto.NewErrorResponse(err))
 
 			ctx.Abort()
 		}

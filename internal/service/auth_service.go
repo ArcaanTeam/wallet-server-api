@@ -1,31 +1,23 @@
-package services
+package service
 
 import (
 	"strconv"
 	"wallet-api/internal/constants"
 	"wallet-api/internal/dto"
 	"wallet-api/internal/models"
-	"wallet-api/internal/repositories"
+	"wallet-api/internal/repo"
 	"wallet-api/internal/utils"
 )
 
-type AuthService interface {
-	Login(input dto.LoginInput) (
-		string,
-		*models.User,
-		constants.ErrorType,
-	)
+type AuthService struct {
+	r *repo.AuthRepo
 }
 
-type authService struct {
-	r repositories.AuthRepository
+func NewAuthService(repo *repo.AuthRepo) *AuthService {
+	return &AuthService{r: repo}
 }
 
-func NewAuthService(repo repositories.AuthRepository) AuthService {
-	return &authService{r: repo}
-}
-
-func (s *authService) Login(input dto.LoginInput) (string, *models.User, constants.ErrorType) {
+func (s *AuthService) Login(input dto.LoginInput) (string, *models.User, constants.ErrorType) {
 	user, err := s.r.GetUserByEmail(input.Email)
 	if err != nil {
 		// TODO: handle database errors separately

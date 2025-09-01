@@ -1,4 +1,4 @@
-package controllers
+package dto
 
 // SuccessResponse standard API response
 type SuccessResponse struct {

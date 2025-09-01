@@ -10,7 +10,6 @@ tasks:
   run:
     desc: Run the application
     cmds:
-      - task: swagger
       - go run cmd/server/main.go
 
   build:

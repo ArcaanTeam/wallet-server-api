@@ -1,29 +1,23 @@
-package services
+package service
 
 import (
 	"errors"
 	"wallet-api/internal/dto"
 	"wallet-api/internal/models"
-	"wallet-api/internal/repositories"
+	"wallet-api/internal/repo"
 	"wallet-api/internal/utils"
 )
 
-type IUserService interface {
-	CreateUser(input dto.CreateUserInput) (*dto.CreateUserResponse, error)
-	GetUserByID(id string) (*dto.UserResponse, error)
-	GetUsers() ([]*dto.UserResponse, error)
-	UpdateUser(id string, input dto.UpdateUserInput) (*dto.UpdateUserResponse, error)
+type UserService struct {
+	r *repo.UserRepo
 }
 
-type userService struct {
-	r repositories.UserRepository
+// TODO get interface
+func NewUserService(userRepo *repo.UserRepo) *UserService {
+	return &UserService{r: userRepo}
 }
 
-func NewUserService(userRepo repositories.UserRepository) IUserService {
-	return &userService{r: userRepo}
-}
-
-func (s *userService) CreateUser(
+func (s *UserService) CreateUser(
 	input dto.CreateUserInput,
 ) (*dto.CreateUserResponse, error) {
 	if len(input.Password) < 6 {
@@ -60,7 +54,7 @@ func (s *userService) CreateUser(
 	}, nil
 }
 
-func (s *userService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.UpdateUserResponse, error) {
+func (s *UserService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.UpdateUserResponse, error) {
 	userToUpdate, err := s.r.FindByID(id)
 	if err != nil {
 		return nil, err
@@ -94,7 +88,7 @@ func (s *userService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.Upd
 	}, nil
 }
 
-func (s *userService) GetUserByID(id string) (*dto.UserResponse, error) {
+func (s *UserService) GetUserByID(id string) (*dto.UserResponse, error) {
 	user, err := s.r.FindByID(id)
 	return &dto.UserResponse{
 		ID:   user.ID,
@@ -102,7 +96,7 @@ func (s *userService) GetUserByID(id string) (*dto.UserResponse, error) {
 	}, err
 }
 
-func (s *userService) GetUsers() ([]*dto.UserResponse, error) {
+func (s *UserService) GetUsers() ([]*dto.UserResponse, error) {
 	users, err := s.r.FindUsers()
 	if err != nil {
 		return []*dto.UserResponse{}, nil

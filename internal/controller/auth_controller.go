@@ -1,23 +1,23 @@
-package controllers
+package controller
 
 import (
 	"net/http"
 	"wallet-api/internal/constants"
 	"wallet-api/internal/dto"
-	"wallet-api/internal/services"
+	"wallet-api/internal/service"
 
 	"github.com/gin-gonic/gin"
 )
 
-type authController struct {
-	s services.AuthService
+type AuthController struct {
+	s service.AuthService
 }
 
-func NewAuthController(service services.AuthService) *authController {
-	return &authController{s: service}
+func NewAuthController(service service.AuthService) *AuthController {
+	return &AuthController{s: service}
 }
 
-func (c *authController) Login(ctx *gin.Context) {
+func (c *AuthController) Login(ctx *gin.Context) {
 	var input dto.LoginInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
