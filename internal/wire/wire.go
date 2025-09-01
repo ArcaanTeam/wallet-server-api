@@ -48,6 +48,10 @@ func (a *App) SetupRoutes() {
 }
 
 func (a *App) Run() error {
+	if a.Config.Flags.Migrate {
+		a.Container.Migrate()
+	}
+
 	a.SetupRoutes()
 	return a.Engine.Run(a.Config.GetPortString())
 }

@@ -7,6 +7,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type IMigratable interface {
+	Migrate() error
+}
+
 type Container struct {
 	DB *gorm.DB
 
@@ -40,4 +44,18 @@ func NewContainer(db *gorm.DB) *Container {
 		AuthService: *authService,
 		UserService: *userService,
 	}
+}
+
+func (c *Container) Migrate() error {
+	migratables := []IMigratable{
+		&c.UserRepo,
+		&c.AuthRepo,
+		&c.TestRepo,
+	}
+	for _, m := range migratables {
+		if err := m.Migrate(); err != nil {
+			return err
+		}
+	}
+	return nil
 }

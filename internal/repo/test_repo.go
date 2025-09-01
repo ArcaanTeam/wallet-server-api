@@ -19,3 +19,7 @@ func NewTestRepo(db *gorm.DB) *TestRepo {
 func (repo *TestRepo) Ping(ctx context.Context) string {
 	return "pong"
 }
+
+func (r *TestRepo) Migrate() error {
+	return r.DB.AutoMigrate()
+}

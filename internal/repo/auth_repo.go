@@ -23,3 +23,7 @@ func (r *AuthRepo) GetUserByEmail(ctx context.Context, email string) (*models.Us
 
 	return &user, nil
 }
+
+func (r *AuthRepo) Migrate() error {
+	return r.db.AutoMigrate(&models.User{})
+}

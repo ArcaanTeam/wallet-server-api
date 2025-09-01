@@ -17,6 +17,11 @@ tasks:
     cmds:
       - go build -o bin/server cmd/server/main.go
 
+  migrate:
+    desc: Run the application and migrate the database schema
+    cmds:
+      - go run cmd/server/main.go -migrate
+
   test:
     desc: "Run all tests"
     cmds:

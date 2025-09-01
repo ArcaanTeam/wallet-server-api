@@ -46,13 +46,6 @@ func (r *UserRepo) FindUsers(ctx context.Context) ([]*models.User, error) {
 	return users, nil
 }
 
-// TODO:
-func (r *UserRepo) Migrate(ctx context.Context) error {
-	return r.db.AutoMigrate(
-		&models.User{},
-	)
-}
-
-type IMigrateRepo interface {
-	Migrate(ctx context.Context) error
+func (r *UserRepo) Migrate() error {
+	return r.db.AutoMigrate(&models.User{})
 }
