@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"context"
 	"wallet-api/internal/models"
 
 	"gorm.io/gorm"
@@ -14,9 +15,9 @@ func NewAuthRepo(db *gorm.DB) *AuthRepo {
 	return &AuthRepo{db: db}
 }
 
-func (r *AuthRepo) GetUserByEmail(email string) (*models.User, error) {
+func (r *AuthRepo) GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
 	var user models.User
-	if err := r.db.First(&user, "email = ?", email).Error; err != nil {
+	if err := r.db.WithContext(ctx).Find(&user, "email = ?", email).Error; err != nil {
 		return nil, err
 	}
 

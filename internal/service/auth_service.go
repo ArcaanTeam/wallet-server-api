@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"strconv"
 	"wallet-api/internal/constants"
 	"wallet-api/internal/dto"
@@ -17,8 +18,8 @@ func NewAuthService(repo *repo.AuthRepo) *AuthService {
 	return &AuthService{r: repo}
 }
 
-func (s *AuthService) Login(input dto.LoginInput) (string, *models.User, constants.ErrorType) {
-	user, err := s.r.GetUserByEmail(input.Email)
+func (s *AuthService) Login(ctx context.Context, input dto.LoginInput) (string, *models.User, constants.ErrorType) {
+	user, err := s.r.GetUserByEmail(ctx, input.Email)
 	if err != nil {
 		// TODO: handle database errors separately
 		return "", nil, constants.ErrAuthUserNotFound

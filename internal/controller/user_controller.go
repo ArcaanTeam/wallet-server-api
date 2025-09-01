@@ -32,6 +32,8 @@ func NewUserController(service service.UserService) *UserController {
 }
 
 func (c *UserController) CreateUser(ctx *gin.Context) {
+	stdCtx := ctx.Request.Context()
+
 	var input dto.CreateUserInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -40,7 +42,7 @@ func (c *UserController) CreateUser(ctx *gin.Context) {
 		})
 	}
 
-	createdUser, err := c.s.CreateUser(input)
+	createdUser, err := c.s.CreateUser(stdCtx, input)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "unable to create user",
@@ -52,6 +54,8 @@ func (c *UserController) CreateUser(ctx *gin.Context) {
 }
 
 func (c *UserController) UpdateUser(ctx *gin.Context) {
+	stdCtx := ctx.Request.Context()
+
 	userIdString, _, err := utils.GetIdParam(ctx)
 	if err != nil {
 		return
@@ -64,7 +68,7 @@ func (c *UserController) UpdateUser(ctx *gin.Context) {
 		})
 	}
 
-	updatedUser, err := c.s.UpdateUser(userIdString, input)
+	updatedUser, err := c.s.UpdateUser(stdCtx, userIdString, input)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "unable to update user",
@@ -75,12 +79,14 @@ func (c *UserController) UpdateUser(ctx *gin.Context) {
 }
 
 func (c *UserController) GetUserByID(ctx *gin.Context) {
+	stdCtx := ctx.Request.Context()
+
 	idString, _, err := utils.GetIdParam(ctx)
 	if err != nil {
 		return
 	}
 
-	user, err := c.s.GetUserByID(idString)
+	user, err := c.s.GetUserByID(stdCtx, idString)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, gin.H{
@@ -99,6 +105,8 @@ func (c *UserController) GetUserByID(ctx *gin.Context) {
 }
 
 func (c *UserController) GetProfile(ctx *gin.Context) {
+	stdCtx := ctx.Request.Context()
+
 	userID, exists := ctx.Get("userID")
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authorized"})
@@ -112,7 +120,7 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 			"details": "",
 		})
 	}
-	user, err := c.s.GetUserByID(userIdString)
+	user, err := c.s.GetUserByID(stdCtx, userIdString)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, gin.H{
@@ -136,7 +144,9 @@ func (c *UserController) GetProfile(ctx *gin.Context) {
 }
 
 func (c *UserController) GetUsers(ctx *gin.Context) {
-	users, err := c.s.GetUsers()
+	stdCtx := ctx.Request.Context()
+
+	users, err := c.s.GetUsers(stdCtx)
 	if err != nil {
 		// TODO: handle not-found branch separately
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

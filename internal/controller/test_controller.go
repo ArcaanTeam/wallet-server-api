@@ -21,7 +21,7 @@ func NewTestController(service service.TestService) *TestController {
 }
 
 func (c *TestController) Ping(ctx *gin.Context) {
-	if c.service.Ping() == "" {
+	if c.service.Ping(ctx.Request.Context()) == "" {
 		ctx.Error(errors.New(constants.ErrInternal))
 		ctx.Next()
 	} else {

@@ -1,7 +1,9 @@
 package service
 
+import "context"
+
 type ITestRepo interface {
-	Ping() string
+	Ping(ctx context.Context) string
 }
 
 type TestService struct {
@@ -14,6 +16,6 @@ func NewTestService(repo ITestRepo) *TestService {
 	}
 }
 
-func (service *TestService) Ping() string {
-	return service.repo.Ping()
+func (service *TestService) Ping(ctx context.Context) string {
+	return service.repo.Ping(ctx)
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"wallet-api/internal/dto"
 	"wallet-api/internal/models"
@@ -18,6 +19,7 @@ func NewUserService(userRepo *repo.UserRepo) *UserService {
 }
 
 func (s *UserService) CreateUser(
+	ctx context.Context,
 	input dto.CreateUserInput,
 ) (*dto.CreateUserResponse, error) {
 	if len(input.Password) < 6 {
@@ -43,7 +45,7 @@ func (s *UserService) CreateUser(
 		Role:         role,
 	}
 
-	if err := s.r.Create(&user); err != nil {
+	if err := s.r.Create(ctx, &user); err != nil {
 		return nil, err
 	}
 	return &dto.CreateUserResponse{
@@ -54,8 +56,8 @@ func (s *UserService) CreateUser(
 	}, nil
 }
 
-func (s *UserService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.UpdateUserResponse, error) {
-	userToUpdate, err := s.r.FindByID(id)
+func (s *UserService) UpdateUser(ctx context.Context, id string, input dto.UpdateUserInput) (*dto.UpdateUserResponse, error) {
+	userToUpdate, err := s.r.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +79,7 @@ func (s *UserService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.Upd
 		userToUpdate.PasswordHash = hashedNewPassword
 	}
 
-	if err := s.r.Update(&userToUpdate); err != nil {
+	if err := s.r.Update(ctx, &userToUpdate); err != nil {
 		return nil, err
 	}
 	return &dto.UpdateUserResponse{
@@ -88,16 +90,16 @@ func (s *UserService) UpdateUser(id string, input dto.UpdateUserInput) (*dto.Upd
 	}, nil
 }
 
-func (s *UserService) GetUserByID(id string) (*dto.UserResponse, error) {
-	user, err := s.r.FindByID(id)
+func (s *UserService) GetUserByID(ctx context.Context, id string) (*dto.UserResponse, error) {
+	user, err := s.r.FindByID(ctx, id)
 	return &dto.UserResponse{
 		ID:   user.ID,
 		Name: user.Name,
 	}, err
 }
 
-func (s *UserService) GetUsers() ([]*dto.UserResponse, error) {
-	users, err := s.r.FindUsers()
+func (s *UserService) GetUsers(ctx context.Context) ([]*dto.UserResponse, error) {
+	users, err := s.r.FindUsers(ctx)
 	if err != nil {
 		return []*dto.UserResponse{}, nil
 	}

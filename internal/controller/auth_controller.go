@@ -18,13 +18,15 @@ func NewAuthController(service service.AuthService) *AuthController {
 }
 
 func (c *AuthController) Login(ctx *gin.Context) {
+	stdCtx := ctx.Request.Context()
+
 	var input dto.LoginInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	token, user, err := c.s.Login(input)
+	token, user, err := c.s.Login(stdCtx, input)
 	// FIXME: move error handling to error middleware
 	if err != constants.ErrNone {
 		ctx.Error(err)

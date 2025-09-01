@@ -1,6 +1,10 @@
 package repo
 
-import "gorm.io/gorm"
+import (
+	"context"
+
+	"gorm.io/gorm"
+)
 
 type TestRepo struct {
 	DB *gorm.DB
@@ -12,6 +16,6 @@ func NewTestRepo(db *gorm.DB) *TestRepo {
 	}
 }
 
-func (repo *TestRepo) Ping() string {
+func (repo *TestRepo) Ping(ctx context.Context) string {
 	return "pong"
 }
