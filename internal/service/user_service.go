@@ -21,6 +21,7 @@ func NewUserService(userRepo *repo.UserRepo) *UserService {
 func (s *UserService) CreateUser(
 	ctx context.Context,
 	input dto.CreateUserInput,
+	//TODO convert response to dto
 ) (*dto.CreateUserResponse, error) {
 	if len(input.Password) < 6 {
 		return nil, errors.New("password must be at least 6 characters long")
@@ -38,6 +39,7 @@ func (s *UserService) CreateUser(
 		role = input.Role
 	}
 
+	//TODO use constructor
 	user := models.User{
 		Name:         input.Name,
 		Email:        input.Email,
@@ -61,6 +63,7 @@ func (s *UserService) UpdateUser(ctx context.Context, id string, input dto.Updat
 	if err != nil {
 		return nil, err
 	}
+	userToUpdate.Update(input.Name, input.Role)
 
 	if input.Name != "" {
 		userToUpdate.Name = input.Name

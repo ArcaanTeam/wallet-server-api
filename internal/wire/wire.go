@@ -23,11 +23,10 @@ func NewApp() *App {
 	// Initialize container
 	con := container.NewContainer(cfg.DBConfig.DB)
 
-	// Setup gin engine
-	eng := gin.Default()
+	gin := NewGinService()
 
 	return &App{
-		Engine:    eng,
+		Engine:    gin.Engine,
 		Config:    cfg,
 		Container: con,
 	}
@@ -45,6 +44,35 @@ func (a *App) SetupRoutes() {
 	routes.NewTestRoutes(a.Container).Setup(router.Group("/test"))
 	routes.NewAuthRoutes(a.Container).Setup(router.Group("/auth"))
 	routes.NewUserRoutes(a.Container).Setup(router.Group("/users"))
+}
+
+type GinHandler struct {
+	//TODO use type
+	Method  string
+	Handler gin.HandlerFunc
+	Path    string
+}
+
+type IGinControllerGroup interface {
+	GetPrefix() string
+	GetRouteHandlers() []GinHandler
+	GetMiddlewares() []gin.HandlerFunc
+}
+type GinService struct {
+	*gin.Engine
+	Config interface{}
+}
+
+func NewGinService() {
+	engine := gin.Default()
+}
+
+func (g *GinService) RegisterController(controller IGinControllerGroup) {
+	router := g.Engine.Group(controller.GetPrefix())
+	router.Use(controller.GetMiddlewares()...)
+	for _, h := range controller.GetRouteHandlers() {
+		router.Handle(h.Method, h.Path, h.Handler)
+	}
 }
 
 func (a *App) Run() error {

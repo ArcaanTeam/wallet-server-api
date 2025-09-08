@@ -25,6 +25,13 @@ type Container struct {
 	UserService service.UserService
 }
 
+// TODO implement
+// func (c *Container) Init() { c.InitHttp() }
+// func (c *Container) InitHttp() {}
+// func (c *Container) GetAuthService() {}
+
+// TODO change input struct to correct struct
+// TODO add controller to container
 func NewContainer(db *gorm.DB) *Container {
 	testRepo := repo.NewTestRepo(db)
 	userRepo := repo.NewUserRepo(db)

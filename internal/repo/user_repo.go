@@ -9,7 +9,6 @@ import (
 
 type UpdateUserInput struct{}
 
-// TODO add context to all functions
 type UserRepo struct {
 	db *gorm.DB
 }
@@ -19,7 +18,7 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 }
 
 func (r *UserRepo) Create(ctx context.Context, user *models.User) error {
-	return r.db.Create(user).Error
+	return r.db.Save(user).Error
 }
 
 func (r *UserRepo) FindByID(ctx context.Context, ID string) (models.User, error) {

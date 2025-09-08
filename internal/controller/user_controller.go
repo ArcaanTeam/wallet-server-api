@@ -14,8 +14,8 @@ type UserController struct {
 	s service.UserService
 }
 
+// TODO implement GinHandler
 type GinHandler struct {
-	//TODO use type
 	Method  string
 	Handler gin.HandlerFunc
 	Path    string
