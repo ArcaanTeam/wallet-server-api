@@ -3,16 +3,18 @@ package constants
 type ErrorType string
 
 const (
-	ErrNone = "no error"
+	ErrNone ErrorType = "no error"
 
-	ErrInternal = "internal server error"
+	ErrInternal ErrorType = "internal server error"
 
-	ErrIDParamNotProvided = "id param not provided"
-	ErrInvalidIDParam     = "invalid id param"
+	ErrIDParamNotProvided ErrorType = "id param not provided"
+	ErrInvalidIDParam     ErrorType = "invalid id param"
 
-	ErrAuthUserNotFound        = "user not found"
-	ErrAuthUnauthorized        = "unauthorized"
-	ErrAuthGenerateTokenFailed = "failed to generate token"
+	ErrAuthUserNotFound        ErrorType = "user not found"
+	ErrAuthUnauthorized        ErrorType = "unauthorized"
+	ErrAuthGenerateTokenFailed ErrorType = "failed to generate token"
+
+	ErrInvalidUserRoleString ErrorType = "invalid user role string"
 )
 
 func (e ErrorType) Error() string {

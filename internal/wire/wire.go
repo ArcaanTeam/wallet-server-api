@@ -4,13 +4,13 @@ import (
 	"net/http"
 	"wallet-api/internal/config"
 	"wallet-api/internal/container"
-	"wallet-api/internal/controller/routes"
+	"wallet-api/internal/controller"
 
 	"github.com/gin-gonic/gin"
 )
 
 type App struct {
-	Engine    *gin.Engine
+	Engine    *controller.GinService
 	Config    *config.Config
 	Container *container.Container
 }
@@ -23,10 +23,10 @@ func NewApp() *App {
 	// Initialize container
 	con := container.NewContainer(cfg.DBConfig.DB)
 
-	gin := NewGinService()
+	gin := controller.NewGinService()
 
 	return &App{
-		Engine:    gin.Engine,
+		Engine:    gin,
 		Config:    cfg,
 		Container: con,
 	}
@@ -39,40 +39,10 @@ func (a *App) SetupRoutes() {
 	})
 
 	router := a.Engine.Group("/api")
-
 	// Setup all routes
-	routes.NewTestRoutes(a.Container).Setup(router.Group("/test"))
-	routes.NewAuthRoutes(a.Container).Setup(router.Group("/auth"))
-	routes.NewUserRoutes(a.Container).Setup(router.Group("/users"))
-}
-
-type GinHandler struct {
-	//TODO use type
-	Method  string
-	Handler gin.HandlerFunc
-	Path    string
-}
-
-type IGinControllerGroup interface {
-	GetPrefix() string
-	GetRouteHandlers() []GinHandler
-	GetMiddlewares() []gin.HandlerFunc
-}
-type GinService struct {
-	*gin.Engine
-	Config interface{}
-}
-
-func NewGinService() {
-	engine := gin.Default()
-}
-
-func (g *GinService) RegisterController(controller IGinControllerGroup) {
-	router := g.Engine.Group(controller.GetPrefix())
-	router.Use(controller.GetMiddlewares()...)
-	for _, h := range controller.GetRouteHandlers() {
-		router.Handle(h.Method, h.Path, h.Handler)
-	}
+	controller.RegisterController(router, controller.NewTestController(a.Container.TestService))
+	controller.RegisterController(router, controller.NewAuthController(a.Container.AuthService))
+	controller.RegisterController(router, controller.NewUserController(a.Container.UserService))
 }
 
 func (a *App) Run() error {

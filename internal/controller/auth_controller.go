@@ -17,6 +17,18 @@ func NewAuthController(service service.AuthService) *AuthController {
 	return &AuthController{s: service}
 }
 
+func (c *AuthController) GetControllerGroups() []GinControllerGroup {
+	return []GinControllerGroup{
+		{
+			Prefix:      "",
+			Middlewares: nil,
+			RouteHandlers: []GinHandler{
+				{"POST", "/login", c.Login},
+			},
+		},
+	}
+}
+
 func (c *AuthController) Login(ctx *gin.Context) {
 	stdCtx := ctx.Request.Context()
 

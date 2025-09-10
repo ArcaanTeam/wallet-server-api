@@ -1,6 +1,8 @@
 package models
 
 import (
+	"wallet-api/internal/constants"
+
 	"gorm.io/gorm"
 )
 
@@ -12,17 +14,18 @@ const (
 )
 
 func NewUserRoleFromString(r string) (UserRole, error) {
-	// TODO implement it
 	switch r {
 	case "admin":
 		return RoleAdmin, nil
+	case "user":
+		return RoleUser, nil
+	default:
+		return "", constants.ErrInvalidUserRoleString
 	}
-	return "", nil
 }
 
-func (u *UserRole) CheckRole() bool {
-	// TODO implement it
-	return false
+func (u UserRole) String() string {
+	return string(u)
 }
 
 type User struct {
@@ -33,11 +36,6 @@ type User struct {
 	PasswordHash string `gorm:"not null"`
 }
 
-func NewUser() {
-
-	return
-
-}
 func (u *User) Update(name string, roleString string) error {
 	if name != "" {
 		u.Name = name

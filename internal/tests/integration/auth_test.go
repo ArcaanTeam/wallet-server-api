@@ -27,7 +27,7 @@ func TestLoginEndpoint(t *testing.T) {
 	testUser := models.User{
 		Email:        "test@example.com",
 		PasswordHash: hashedPassword,
-		Role:         models.RoleAdmin,
+		Role:         models.RoleAdmin.String(),
 	}
 	if err := testDB.Create(&testUser).Error; err != nil {
 		t.Fatalf("Failed to create test user:\n %s\n", err.Error())

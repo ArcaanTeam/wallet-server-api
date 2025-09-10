@@ -2,7 +2,9 @@ package controller
 
 import (
 	"net/http"
+	"wallet-api/internal/controller/middlewares"
 	"wallet-api/internal/dto"
+	"wallet-api/internal/models"
 	"wallet-api/internal/service"
 	"wallet-api/internal/utils"
 
@@ -14,21 +16,34 @@ type UserController struct {
 	s service.UserService
 }
 
-// TODO implement GinHandler
-type GinHandler struct {
-	Method  string
-	Handler gin.HandlerFunc
-	Path    string
-}
-
-type IGinControllerGroup interface {
-	GetPrefix() string
-	GetRouteHandlers() []GinHandler
-	GetMiddlewares() []gin.HandlerFunc
-}
-
 func NewUserController(service service.UserService) *UserController {
 	return &UserController{s: service}
+}
+
+func (c *UserController) GetControllerGroups() []GinControllerGroup {
+	return []GinControllerGroup{
+		{
+			"/users",
+			[]gin.HandlerFunc{
+				middlewares.JwtAuthMiddleware(),
+				middlewares.RBAC(models.RoleAdmin.String()),
+			},
+			[]GinHandler{
+				{"POST", "", c.CreateUser},
+				{"GET", "/:id", c.GetUserByID},
+				{"PUT", "/:id", c.UpdateUser},
+			},
+		},
+		{
+			"/users",
+			[]gin.HandlerFunc{
+				middlewares.JwtAuthMiddleware(),
+			},
+			[]GinHandler{
+				{"GET", "/profile", c.GetProfile},
+			},
+		},
+	}
 }
 
 func (c *UserController) CreateUser(ctx *gin.Context) {

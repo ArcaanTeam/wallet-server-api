@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"net/http"
 	"wallet-api/internal/constants"
 	"wallet-api/internal/dto"
@@ -19,12 +18,23 @@ func NewTestController(service service.TestService) *TestController {
 		service: service,
 	}
 }
+func (c *TestController) GetControllerGroups() []GinControllerGroup {
+	return []GinControllerGroup{
+		{
+			Prefix:      "/test",
+			Middlewares: nil,
+			RouteHandlers: []GinHandler{
+				{"GET", "/ping", c.Ping},
+			},
+		},
+	}
+}
 
 func (c *TestController) Ping(ctx *gin.Context) {
 	if c.service.Ping(ctx.Request.Context()) == "" {
-		ctx.Error(errors.New(constants.ErrInternal))
+		ctx.Error(constants.ErrInternal)
 		ctx.Next()
 	} else {
-		ctx.JSON(http.StatusOK, dto.NewSuccessResponse(gin.H{"message": "ping"}))
+		ctx.JSON(http.StatusOK, dto.NewSuccessResponse(gin.H{"message": "pong"}))
 	}
 }

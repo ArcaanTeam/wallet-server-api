@@ -3,7 +3,7 @@ package tests
 import (
 	"testing"
 	"wallet-api/internal/container"
-	"wallet-api/internal/controller/routes"
+	"wallet-api/internal/controller"
 	"wallet-api/internal/models"
 
 	"github.com/gin-gonic/gin"
@@ -32,9 +32,9 @@ func GetTestRouter(db *gorm.DB) *gin.Engine {
 	router := engine.Group("/api")
 	container := container.NewContainer(db)
 
-	routes.NewUserRoutes(container).Setup(router.Group("/users"))
-	routes.NewAuthRoutes(container).Setup(router.Group("/auth"))
-	routes.NewTestRoutes(container).Setup(router.Group("/test"))
+	controller.RegisterController(router, controller.NewTestController(container.TestService))
+	controller.RegisterController(router, controller.NewAuthController(container.AuthService))
+	controller.RegisterController(router, controller.NewUserController(container.UserService))
 
 	return engine
 }

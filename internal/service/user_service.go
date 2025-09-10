@@ -32,11 +32,9 @@ func (s *UserService) CreateUser(
 		return nil, err
 	}
 
-	var role string
-	if !utils.IsValidRole(role) || input.Role == "" {
-		role = models.RoleUser // Default role
-	} else {
-		role = input.Role
+	role, err := models.NewUserRoleFromString(input.Role)
+	if err != nil {
+		role = models.RoleUser
 	}
 
 	//TODO use constructor
@@ -44,7 +42,7 @@ func (s *UserService) CreateUser(
 		Name:         input.Name,
 		Email:        input.Email,
 		PasswordHash: hashedPassword,
-		Role:         role,
+		Role:         role.String(),
 	}
 
 	if err := s.r.Create(ctx, &user); err != nil {
@@ -71,8 +69,9 @@ func (s *UserService) UpdateUser(ctx context.Context, id string, input dto.Updat
 	if input.Email != "" {
 		userToUpdate.Email = input.Email
 	}
-	if input.Role != "" && utils.IsValidRole(input.Role) {
-		userToUpdate.Role = input.Role
+	role, err := models.NewUserRoleFromString(input.Role)
+	if err == nil {
+		userToUpdate.Role = role.String()
 	}
 	if input.Password != "" && len(input.Password) > 5 {
 		hashedNewPassword, err := utils.HashPassword(input.Password)
